@@ -1,0 +1,24 @@
+version: "3.8"
+services:
+    web:
+        build: .
+        ports:
+            - "5000:5000"
+        volumes:
+            - .:/code
+        depends_on:
+            - db
+        links:
+            - db
+    db:
+        image: mysql:8
+        container_name: db
+        ports:
+            - "3306:3306"
+        environment:
+            MYSQL_DATABASE: carford_db
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_USER: carford
+            MYSQL_PASSWORD: carford123
+        volumes:
+            - ./app/db:/docker-entrypoint-initdb.d/:ro

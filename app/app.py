@@ -1,6 +1,5 @@
-from flask import Flask, Response, request, jsonify
+from flask import Flask, Response, request
 from flask_sqlalchemy import SQLAlchemy
-import mysql.connector
 import json
 
 
@@ -11,17 +10,6 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://carford:carford123@192.
 
 
 connection = SQLAlchemy(app)
-
-
-# config = {
-#         'user': 'carford',
-#         'password': 'carford123',
-#         'host': '172.24.0.2',
-#         'port': '3306',
-#         'database': 'carford_db'
-#     }
-
-# connection = mysql.connector.connect(**config)
 
 class Proprietarios(connection.Model):
   id = connection.Column("id", connection.Integer, primary_key=True)
@@ -55,36 +43,36 @@ def getProp():
   try:
     proprietarios = Proprietarios.query.all()
     json_convert = [ prop.to_json() for prop in proprietarios ]
-    return Response(json.dumps(json_convert))
+    return Response(json.dumps(json_convert), status=200)
   except Exception as ex:
-    return Response(json.dumps({ "status": 404, "message": ex.args }))
+    return Response(json.dumps({ "status": 404, "message": ex.args }), status=404)
 
 @app.route("/carros", methods=['GET'])
 def getCar():
   try:
     cars = Carros.query.all()
     json_convert = [ car.to_json() for car in cars ]
-    return Response(json.dumps(json_convert))
+    return Response(json.dumps(json_convert), status=200)
   except Exception as ex:
-    return Response(json.dumps({ "status": 404, "message": ex.args }))
+    return Response(json.dumps({ "status": 404, "message": ex.args }), status=404)
 
 @app.route("/proprietario/<id>")
 def getPropId(id):
   try:
       proprietario = Proprietarios.query.filter_by(id=id).first()
       json_convert = proprietario.to_json()
-      return Response(json.dumps(json_convert))
+      return Response(json.dumps(json_convert), status=200)
   except Exception as ex:
-      return Response(json.dumps({ "status": 404, "message": ex.args }))
+      return Response(json.dumps({ "status": 404, "message": ex.args }), status=404)
 
 @app.route("/carro/<id>")
 def getCarId(id):
   try:
       carro = Carros.query.filter_by(id=id).first()
       json_convert = carro.to_json()
-      return Response(json.dumps(json_convert))
+      return Response(json.dumps(json_convert), status=200)
   except Exception as ex:
-      return Response(json.dumps({ "status": 404, "message": ex.args }))  
+      return Response(json.dumps({ "status": 404, "message": ex.args }), status=404)  
 
 @app.route("/cadastro", methods=['POST'])
 def createProp():
@@ -96,7 +84,7 @@ def createProp():
     connection.session.commit()
     return Response(json.dumps(proprietario.to_json()))
   except Exception as ex:
-    return Response(json.dumps({ "status": 404, "message": ex.args })) 
+    return Response(json.dumps({ "status": 404, "message": ex.args }), status=404) 
 
 if __name__ == "__main__":
   app.run(host="0.0.0.0", debug=True)

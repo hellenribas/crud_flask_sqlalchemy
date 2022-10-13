@@ -3,3 +3,6 @@ mysql-connector-python
 flask_sqlalchemy
 mysqlclient
 PyMySQL
+pytest
+httpx
+behave
